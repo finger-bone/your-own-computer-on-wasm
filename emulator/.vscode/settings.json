@@ -6,7 +6,13 @@
         "./Cargo.toml",
         "./Cargo.toml",
         "./Cargo.toml",
+        "./Cargo.toml",
+        "./Cargo.toml",
+        "./Cargo.toml",
         "./Cargo.toml"
     ],
-    "cmake.configureOnOpen": true
+    "cmake.configureOnOpen": true,
+    "cSpell.words": [
+        "asciz"
+    ]
 }

@@ -17,7 +17,7 @@ impl Mem {
     }
     pub fn set_word(mut self, addr: u64, val: u64) -> Mem {
         for i in 0..8 {
-            self.mem[addr as usize + i] = ((val >> (8 * i)) & 0xff) as u8;
+            self.mem[addr as usize + i] = ((val >> (8 * (8 - i - 1))) & 0xff) as u8;
         }
         Mem {
             mem: self.mem,

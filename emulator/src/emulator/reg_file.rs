@@ -123,7 +123,7 @@ impl RegFile {
         self.regs[PC].get()
     }
     pub fn set_lr(mut self) -> RegFile {
-        self.regs[LR] = Reg::new().set(self.regs[PC].get() + 8);
+        self.regs[LR] = Reg::new().set(self.regs[PC].get());
         RegFile {
             regs: self.regs,
             cpsr: Cpsr {

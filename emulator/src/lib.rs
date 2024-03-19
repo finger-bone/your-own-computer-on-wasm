@@ -1,4 +1,5 @@
 pub mod emulator;
+pub mod assembler;
 mod test;
 
 use wasm_bindgen::prelude::*;
