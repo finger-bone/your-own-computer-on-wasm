@@ -17,3 +17,5 @@ The project is divided into
 9. Implement a Compiler for High-Level Language
 
 Tutorials will come soon.
+
+Currently, the code is up to step 5. An assembler has been implemented.
