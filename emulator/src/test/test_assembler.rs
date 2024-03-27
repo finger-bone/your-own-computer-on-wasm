@@ -158,7 +158,7 @@ mod test_assembler {
         assert_eq!(sys.get_reg(0), 120);
     }
     #[test]
-    fn test_int() {
+    fn test_mvi() {
         let mut sys = CoreSys::new();
         sys = sys.load_mem(assemble("
         mvi r0
@@ -174,5 +174,35 @@ mod test_assembler {
             }
         }
         assert_eq!(sys.get_reg(0), 2);
+    }
+    #[test]
+    fn test_trigger_int() {
+        let mut sys = CoreSys::new();
+        sys = sys.load_mem(assemble("
+        b =main
+        mvi r0
+        main:
+        mov r1, #1
+        cmp r0, #2
+        intne r1, #2
+        hlt
+        "));
+        sys = sys.set_int_table(vec![0, 8]);
+        while !sys.halted() {
+            sys = sys.step();
+        }
+        assert_eq!(sys.get_reg(0), 2);
+    }
+    #[test]
+    fn test_qry() {
+        let mut sys = CoreSys::new();
+        sys = sys.load_mem(assemble("
+        qry #3
+        hlt
+        "));
+        while !sys.halted() {
+            sys = sys.step();
+        }
+        assert_eq!(sys.get_qry(), 3);
     }
 }

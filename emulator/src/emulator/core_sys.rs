@@ -33,6 +33,7 @@ pub struct CoreSys {
     pub write_regs: SingleWire,
     pub int_data: Wire,
     pub int: Wire,
+    pub query: Wire,
 
     int_table: Vec<u64>,
     memory: Mem,
@@ -69,6 +70,7 @@ impl CoreSys {
             write_regs: SingleWire::new(),
             int_data: Wire::new(),
             int: Wire::new(),
+            query: Wire::new(),
 
             int_table: Vec::new(),
             memory: Mem::new(vec![0; MEM_SIZE]),
@@ -178,6 +180,10 @@ impl CoreSys {
             self.data_bus = self.data_bus.set(
                 self.int_data.get()
             );
+        } else if op == Operation::Qry {
+            self.query = self.query.set(
+                self.data_bus.get()
+            );
         }
         self
     }
@@ -228,7 +234,6 @@ impl CoreSys {
         self
     }
     pub fn load_mem(mut self, val: Vec<u8>) -> CoreSys {
-        // expand val to the size of MEM_SIZE by filling 0
         let mut loaded_mem = vec![0; MEM_SIZE];
         for i in 0..val.len() {
             loaded_mem[i] = val[i];
@@ -249,6 +254,7 @@ impl CoreSys {
         let op = Operation::new(self.op.get());
         op == Operation::Hlt
     }
+
     pub fn step(mut self) -> CoreSys {
         if self.halted() {
             return self;
@@ -273,6 +279,12 @@ impl CoreSys {
         }
         self = self.read_reg();
         if self.reg_file.get_cond(self.cond.get()) {
+            if op == Operation::Int {
+                let out_b = self.out_b.get();
+                let out_c = self.out_c.get();
+                self = self.interrupt(out_b, out_c);
+                return self;
+            }
             self = self.execute();
             let op_type = OperationType::new(self.op.get());
             if op_type == OperationType::Mem {
@@ -284,6 +296,10 @@ impl CoreSys {
         }
         self
     }
+}
+
+#[wasm_bindgen]
+impl CoreSys {
     pub fn get_reg(&self, idx: u64) -> u64 {
         self.reg_file.get(idx)
     }
@@ -317,5 +333,14 @@ impl CoreSys {
     }
     pub fn dump_int_table(&self) -> Vec<u64> {
         self.int_table.clone()
+    }
+    pub fn get_qry(&self) -> u64 {
+        self.query.get()
+    }
+    pub fn get_int_data(&self) -> u64 {
+        self.int_data.get()
+    }
+    pub fn get_int(&self) -> u64 {
+        self.int.get()
     }
 }

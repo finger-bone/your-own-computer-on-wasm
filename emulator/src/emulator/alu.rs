@@ -387,6 +387,7 @@ impl Alu {
             Operation::Push => (c, 0, 0),
             Operation::Bl => (c, 0, 0),
             Operation::B => (c, 0, 0),
+            Operation::Qry => (c, 0, 0),
             _ => (0, 0, 0),
         }
     }

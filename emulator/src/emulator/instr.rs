@@ -79,6 +79,8 @@ pub enum Operation {
     Ror = 0b01_0000_0010_0100,
 
     Mvi = 0b01_0000_0011_0000,
+    Qry = 0b01_0000_0011_0001,
+    Int = 0b01_0000_0011_0010,
 
     Ldr = 0b10_0000_0000_0000,
     Str = 0b10_0000_0000_0001,
@@ -121,6 +123,8 @@ impl Operation {
             0b01_0000_0001_1000 => Operation::Teq,
 
             0b01_0000_0011_0000 => Operation::Mvi,
+            0b01_0000_0011_0001 => Operation::Qry,
+            0b01_0000_0011_0010 => Operation::Int,
 
             0b10_0000_0000_0000 => Operation::Ldr,
             0b10_0000_0000_0001 => Operation::Str,
@@ -241,11 +245,14 @@ pub fn instr_to_string(instr: u64) -> String {
         Operation::Asr => format!("asr{} r{}, r{}, {}", generate_postfix(decoded), decoded.reg_d_mem, decoded.reg_b, reg_c_to_string(decoded)),
         Operation::Rol => format!("rol{} r{}, r{}, {}", generate_postfix(decoded), decoded.reg_d_mem, decoded.reg_b, reg_c_to_string(decoded)),
         Operation::Ror => format!("ror{} r{}, r{}, {}", generate_postfix(decoded), decoded.reg_d_mem, decoded.reg_b, reg_c_to_string(decoded)),
-        Operation::Cmp => format!("cmp r{}, {}", decoded.reg_a, reg_c_to_string(decoded)),
-        Operation::Cmn => format!("cmn r{}, {}", decoded.reg_a, reg_c_to_string(decoded)),
-        Operation::Tst => format!("tst r{}, {}", decoded.reg_a, reg_c_to_string(decoded)),
-        Operation::Teq => format!("teq r{}, {}", decoded.reg_a, reg_c_to_string(decoded)),
+        Operation::Cmp => format!("cmp r{}, {}", decoded.reg_b, reg_c_to_string(decoded)),
+        Operation::Cmn => format!("cmn r{}, {}", decoded.reg_b, reg_c_to_string(decoded)),
+        Operation::Tst => format!("tst r{}, {}", decoded.reg_b, reg_c_to_string(decoded)),
+        Operation::Teq => format!("teq r{}, {}", decoded.reg_b, reg_c_to_string(decoded)),
+        
         Operation::Mvi => format!("mvi{} r{}", generate_postfix(decoded), decoded.reg_d_mem),
+        Operation::Qry => format!("qry{} {}", generate_postfix(decoded), reg_c_to_string(decoded)),
+        Operation::Int => format!("int{} r{}, {}", generate_postfix(decoded), decoded.reg_b, reg_c_to_string(decoded)),
 
         Operation::Ldr => format!("ldr{} r{}, {}", generate_postfix(decoded), decoded.reg_d_mem, generate_memo_addr(decoded)),
         Operation::Str => format!("str{} r{}, {}", generate_postfix(decoded), decoded.reg_d_mem, generate_memo_addr(decoded)),

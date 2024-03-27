@@ -259,7 +259,16 @@ pub fn parse_instruction(l: &str) -> (u64, bool, u64, &str) {
         opcode = 0b11_0000_0000_0000;
         postfix = &to_parse[1..];
         op_name = "b";
-    } else {
+    } else if to_parse.starts_with("int") {
+        opcode = 0b01_0000_0011_0010;
+        postfix = &to_parse[3..];
+        op_name = "int";
+    } else if to_parse.starts_with("qry") {
+        opcode = 0b01_0000_0011_0001;
+        postfix = &to_parse[3..];
+        op_name = "qry";
+    }
+    else {
         panic!("Unknown instruction: {}", to_parse);
     }
     if postfix.starts_with("s") {
@@ -272,8 +281,8 @@ pub fn parse_instruction(l: &str) -> (u64, bool, u64, &str) {
 
 const NO_OPERANDS: [&str; 2] = ["nop", "hlt"];
 const D_OPERAND: [&str; 3] = ["mvi", "pop", "push"];
-const C_OPERAND: [&str; 2] = ["b", "bl"];
-const B_C_OPERAND: [&str; 4] = ["cmp", "cmn", "tst", "teq"];
+const C_OPERAND: [&str; 3] = ["b", "bl", "qry"];
+const B_C_OPERAND: [&str; 5] = ["cmp", "cmn", "tst", "teq", "int"];
 const D_C_OPERAND: [&str; 2] = ["mov", "mvn"];
 const D_B_C_OPERAND: [&str; 16] = [
     "add", "sub", "mul", "div", "smul", "sdiv", "modu", "smodu", "and", "orr", "eor", "lsl", "lsr",
@@ -422,4 +431,16 @@ pub fn assemble(text: &str) -> Vec<u8> {
     let lines = preprocess(text.to_string());
     let assembled = to_binary(&lines);
     to_memory(assembled)
+}
+
+#[wasm_bindgen]
+pub fn label_map(text: &str) -> String {
+    let lines = preprocess(text.to_string());
+    let intermediate = assemble_raw(lines.clone());
+    let (label_map, _) = generate_label_map(&intermediate);
+    let mut ret = String::new();
+    for (k, v) in label_map {
+        ret.push_str(&format!("{}:{}\n", k, v));
+    }
+    ret
 }
