@@ -133,20 +133,18 @@ impl CoreSys {
                 PC as u64
             )
         }
+        if decoded_op == Operation::Push {
+            let next_sp = self.reg_file.get(SP as u64) - 8;
+            self.reg_file = self.reg_file.set(
+                SP as u64, next_sp
+            )
+        }
         self.write_regs = self.write_regs.set(
             !(decoded_op == Operation::Cmp || decoded_op == Operation::Cmn || decoded_op == Operation::Teq || decoded_op == Operation::Tst)
         );
         self
     }
     pub fn read_reg(mut self) -> CoreSys {
-        let op = decode_op(self.op.get());
-        if op == Operation::Push {
-            let next_sp = self.reg_file.get(SP as u64) - 8;
-            self.reg_file = self.reg_file.set(
-                SP as u64, next_sp
-            )
-        }
-
         let op_type: OperationType = decode_op_type(self.op.get());
         match op_type {
             OperationType::DataProc | OperationType::Special | OperationType::Branch => {

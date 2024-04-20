@@ -205,4 +205,22 @@ mod test_assembler {
         }
         assert_eq!(sys.get_qry(), 3);
     }
+    #[test]
+    fn test_raw_another() {
+        let mut sys = CoreSys::new();
+        sys = sys.load_mem(assemble("
+        b =main
+        d:
+        .word
+        11
+        main:
+        mov r1, =d
+        ldr r0, r1
+        hlt
+        "));
+        while !sys.halted() {
+            sys = sys.step();
+        }
+        assert_eq!(sys.get_reg(0), 11);
+    }
 }

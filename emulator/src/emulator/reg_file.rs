@@ -49,9 +49,6 @@ pub const SP: usize = 13;
 
 #[derive(Debug)]
 pub struct RegFile {
-    // r13 sp
-    // r14 lr
-    // r15 pc
     regs: Vec<Reg>,
     cpsr: Cpsr,
 }
