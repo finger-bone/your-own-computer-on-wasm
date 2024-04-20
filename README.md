@@ -1,9 +1,3 @@
----
-runme:
-  id: 01HSZTP2E3VS3E1C62ZD42DPHN
-  version: v3
----
-
 # Your Own Computer on WASM
 
 This is an educational project to demonstrate the basics of writing emulators. The goal of this project is to design and emulate a simple computer system, design and implement an assembler for it, and in the end, write a high-level language compiler for it.
